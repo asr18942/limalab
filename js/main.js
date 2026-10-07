@@ -10,9 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Publications filter (publications.html only)
+  // Publications filter (publications.html only) — filters by research-area tag
   var filterButtons = document.querySelectorAll(".filter-btn");
   var pubItems = document.querySelectorAll(".pub-item");
+  var pubEmptyState = document.getElementById("pubEmptyState");
 
   if (filterButtons.length && pubItems.length) {
     filterButtons.forEach(function (btn) {
@@ -23,14 +24,18 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.classList.add("active");
 
         var filter = btn.getAttribute("data-filter");
+        var visible = 0;
 
         pubItems.forEach(function (item) {
-          if (filter === "all" || item.getAttribute("data-year") === filter) {
-            item.style.display = "";
-          } else {
-            item.style.display = "none";
-          }
+          var cats = (item.getAttribute("data-cats") || "").split(" ");
+          var show = filter === "all" || cats.indexOf(filter) !== -1;
+          item.style.display = show ? "" : "none";
+          if (show) visible++;
         });
+
+        if (pubEmptyState) {
+          pubEmptyState.hidden = visible !== 0;
+        }
       });
     });
   }
